@@ -5,16 +5,17 @@ namespace App\Http\Controllers\ServiceProvider;
 use App\Http\Controllers\BaseController;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\Item;
 use Yajra\DataTables\DataTables;
 
-class CategoryController extends BaseController
+class ItemController extends BaseController
 {
     public function __construct()
     {
-        $this->title = "Categories";
-        $this->resources = "service_providers.categories.";
+        $this->title = "Items";
+        $this->resources = "service_providers.items.";
         parent::__construct();
-        $this->route = "categories.";
+        $this->route = "items.";
     }
     /**
      * Display a listing of the resource.
@@ -24,18 +25,29 @@ class CategoryController extends BaseController
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Category::where('service_provider_id', auth()->user()->id)->orderBy('id', 'DESC');
+            $data = Item::where('service_provider_id', auth()->user()->id)->orderBy('id', 'DESC');
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->editColumn('category_id', function ($data) {
+                    if($data->category) {
+                        return '<a target="_blank" href="'. route('categories.show', $data->category->id) .'">'. $data->category->name .'</a>';
+                    } else {
+                        return 'N/A';
+                    }
+                })
                 ->addColumn('action', function ($data) {
                     return view('admin.templates.index_action2', [
                         'id' => $data->id, 'route' => $this->route
                     ])->render();
                 })
-                ->rawColumns(['action'])
+                ->filter(function ($query) {
+                    $query->where('category_id', 'like', "%" . request('categoryFilter') . "%");
+                }, true)
+                ->rawColumns(['action', 'category_id'])
                 ->make(true);
         }
         $info = $this->crudInfo();
+        $info['categories'] = Category::where('service_provider_id', auth()->user()->id)->get();;
 
         return view($this->indexResource(), $info);
     }
@@ -48,7 +60,7 @@ class CategoryController extends BaseController
     public function create()
     {
         $info = $this->crudInfo();
-
+        $info['categories'] = Category::where('service_provider_id', auth()->user()->id)->get();
         return view($this->createResource(), $info);
     }
 
@@ -61,16 +73,17 @@ class CategoryController extends BaseController
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string'
+            'name' => 'required|string',
+            'category_id' => 'required'
         ]);
 
-        $category = new Category();
-        $category->service_provider_id = auth()->user()->id;
-        $category->name = $request->name;
-        $category->description = $request->description;
-        $category->save();
+        $item = new Item();
+        $item->service_provider_id = auth()->user()->id;
+        $item->name = $request->name;
+        $item->category_id = $request->category_id;
+        $item->save();
 
-        return redirect()->route($this->indexRoute())->with('success', 'Category Added Successfully.');
+        return redirect()->route($this->indexRoute())->with('success', 'Item Added Successfully.');
     }
 
     /**
@@ -82,10 +95,10 @@ class CategoryController extends BaseController
     public function show($id)
     {
         $info =  $this->crudInfo();
-        $info['item'] = Category::findOrFail($id);
-
+        $info['item'] = Item::findOrFail($id);
+        $info['categories'] = Category::where('service_provider_id', auth()->user()->id)->get();
         return view($this->showResource(), $info);
-     }
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -96,8 +109,8 @@ class CategoryController extends BaseController
     public function edit($id)
     {
         $info =  $this->crudInfo();
-        $info['item'] = Category::findOrFail($id);
-
+        $info['item'] = Item::findOrFail($id);
+        $info['categories'] = Category::where('service_provider_id', auth()->user()->id)->get();
         return view($this->editResource(), $info);
     }
 
@@ -111,16 +124,17 @@ class CategoryController extends BaseController
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|string'
+            'name' => 'required|string',
+            'category_id' => 'required'
         ]);
 
-        $category = Category::findOrFail($id);
-        $category->service_provider_id = auth()->user()->id;
-        $category->name = $request->name;
-        $category->description = $request->description;
-        $category->update();
+        $item = Item::findOrFail($id);
+        $item->service_provider_id = auth()->user()->id;
+        $item->name = $request->name;
+        $item->category_id = $request->category_id;
+        $item->update();
 
-        return redirect()->route($this->indexRoute())->with('success', 'Category Updated Successfully.');
+        return redirect()->route($this->indexRoute())->with('success', 'Item Updated Successfully.');
     }
 
     /**
@@ -131,9 +145,9 @@ class CategoryController extends BaseController
      */
     public function destroy($id)
     {
-        $category = Category::findOrFail($id);
-        $category->delete();
+        $item = Item::findOrFail($id);
+        $item->delete();
 
-        return redirect()->route($this->indexRoute())->with('delete', 'Category Deleted Successfully.');
+        return redirect()->route($this->indexRoute())->with('delete', 'Item Deleted Successfully.');
     }
 }

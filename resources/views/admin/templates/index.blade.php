@@ -17,6 +17,12 @@
             {{ session('success') }}
         </div>
     @endif
+    @if (session('delete'))
+        <div class="alert alert-danger alert-block p-3">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            {{ session('delete') }}
+        </div>
+    @endif
     <section class="content">
         <div class="container-fluid">
             <div class="row">

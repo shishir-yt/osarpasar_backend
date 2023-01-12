@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class HomeController extends Controller
 {
@@ -28,6 +29,7 @@ class HomeController extends Controller
 
     public function adminIndex()
     {
-        return view('admin.home');
+        $data['serviceProviders'] = User::where('is_admin', "0")->count();
+        return view('admin.home', $data);
     }
 }

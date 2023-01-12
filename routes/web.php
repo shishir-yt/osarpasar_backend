@@ -18,6 +18,14 @@ Route::get('/', function () {
     return redirect()->route('home');
 });
 
+Route::get('/redirect', function () {
+    if (\App\Helpers\UserTypeHelper::check() === "1") {
+        return redirect()->route('adminHome');
+    } else {
+        return redirect()->route('serviceProvider.home');
+    }
+})->name('redirect');
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -34,6 +42,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => 'service-provider'], function () {
         Route::get('home', [App\Http\Controllers\ServiceProvider\DashboardController::class, 'home'])->name('serviceProvider.home');
         Route::resource('categories', App\Http\Controllers\ServiceProvider\CategoryController::class);
+        Route::resource('items', App\Http\Controllers\ServiceProvider\ItemController::class);
     });
 
     Route::resource('uploader', App\Http\Controllers\UploadController::class);

@@ -9,6 +9,6 @@
 <div class="row my-3">
     <div class="col-md-12">
         <label>Description <span class="text-primary"></label>
-        <textarea id="summernote" class="form-control" name=description>{!! old('description', $item->description) !!}</textarea>
+        <textarea id="summernote" class="form-control" name="description">{!! old('description', $item->description) !!}</textarea>
     </div>
 </div>

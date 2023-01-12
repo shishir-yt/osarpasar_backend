@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
 
-class Category extends BaseModel
+class Item extends Model
 {
     use HasFactory;
 
@@ -16,8 +16,8 @@ class Category extends BaseModel
         return $this->belongsTo(User::class, 'service_provider_id');
     }
 
-    public function items()
+    public function category()
     {
-        return $this->hasMany(Item::class, 'category_id');
+        return $this->belongsTo(Category::class, 'category_id');
     }
 }

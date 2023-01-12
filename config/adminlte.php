@@ -253,7 +253,7 @@ return [
     */
 
     'use_route_url' => false,
-    'dashboard_url' => 'home',
+    'dashboard_url' => 'redirect',
     'logout_url' => 'logout',
     'login_url' => 'login',
     'register_url' => 'register',
@@ -347,6 +347,12 @@ return [
             'text'        => 'Category',
             'route'         => 'categories.index',
             'icon'        => 'nav-icon fas fa-list',
+            'is_admin' => "0"
+        ],
+        [
+            'text'        => 'Item',
+            'route'         => 'items.index',
+            'icon'        => 'nav-icon fas fa-check',
             'is_admin' => "0"
         ],
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Controllers\BaseController;
+use Yajra\DataTables\DataTables;
 
 class ServiceProviderController extends BaseController
 {
@@ -20,8 +21,21 @@ class ServiceProviderController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            $data = User::where('is_admin', "0")->orderBy('id', 'DESC');
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($data) {
+                    return view('admin.templates.index_action2', [
+                        'id' => $data->id, 'route' => $this->route
+                    ])->render();
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
         $info = $this->crudInfo();
         $info['serviceProviders'] = User::where("is_admin","0")->get();
         return view($this->indexResource(), $info);
