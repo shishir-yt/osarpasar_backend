@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Support\Facades\Crypt;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,27 +18,19 @@ class DatabaseSeeder extends Seeder
     {
 
         \App\Models\User::create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin',
+            'email' => 'admin@admin.com',
             'phone_number' => '123456789',
-            'type' => 'admin',
-            'password' => '123456789',
+            'is_admin' => '1',
+            'password' => Crypt::encryptString('12345678'),
         ]);
 
         \App\Models\User::create([
-            'name' => 'Test User',
-            'email' => 'test1@example.com',
-            'phone_number' => '1234156789',
-            'type' => 'admin',
-            'password' => '123456789',
-        ]);
-
-        \App\Models\User::create([
-            'name' => 'Test User',
-            'email' => 'test2@example.com',
-            'phone_number' => '1234526789',
-            'type' => 'admin',
-            'password' => '123456789',
+            'name' => 'Service Provider',
+            'email' => 'sp@sp.com',
+            'phone_number' => '1234567890',
+            'is_admin' => '0',
+            'password' => Crypt::encryptString('12345678'),
         ]);
     }
 }

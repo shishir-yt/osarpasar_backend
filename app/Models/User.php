@@ -23,7 +23,7 @@ class User extends Authenticatable
         'password',
         'phone_number',
         'email_verfied_at',
-        'type'
+        'is_admin'
     ];
 
     /**
@@ -44,4 +44,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function adminlte_image()
+    {
+        return 'https://picsum.photos/300/300';
+    }
+
+    public function categories()
+    {
+        return $this->hasMany(Category::class, 'service_provider_id');
+    }
 }
