@@ -51,8 +51,10 @@ class LoginController extends Controller
                 if($user->is_admin == "1") {
                     // return redirect('/admin/home');
                     return redirect()->route('adminHome');
-                } else {
+                } elseif($user->is_admin == "0") {
                     return redirect()->route('serviceProvider.home');
+                } else {
+                    return back()->with('passwordError', 'Oops! The data you have entered is not in the database.');
                 }
             }else {
                 return back()->with('passwordError', 'Oops! You have entered an invalid password. Please try again.');

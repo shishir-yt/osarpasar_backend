@@ -61,7 +61,7 @@ class ServiceProviderController extends BaseController
      */
     public function store(Request $request)
     {
-        //
+
     }
 
     /**

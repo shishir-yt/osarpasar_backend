@@ -6,7 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -53,5 +53,35 @@ class User extends Authenticatable
     public function categories()
     {
         return $this->hasMany(Category::class, 'service_provider_id');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(Item::class, 'service_provider_id');
+    }
+
+    public function otherItems()
+    {
+        return $this->hasMany(OtherItem::class, 'service_provider_id');
+    }
+
+    public function userOtherItems()
+    {
+        return $this->hasMany(OtherItem::class, 'user_id');
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'service_provider_id');
+    }
+
+    public function userOrders()
+    {
+        return $this->hasMany(Order::class, 'user_id');
+    }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class, 'service_provider_id');
     }
 }

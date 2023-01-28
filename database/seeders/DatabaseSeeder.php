@@ -32,5 +32,37 @@ class DatabaseSeeder extends Seeder
             'is_admin' => '0',
             'password' => Crypt::encryptString('12345678'),
         ]);
+
+        \App\Models\Category::create([
+            'service_provider_id' => '2',
+            'name' => 'Furniture',
+        ]);
+
+        \App\Models\Item::create([
+            'service_provider_id' => '2',
+            'category_id' => '1',
+            'name' => 'Table',
+        ]);
+
+        \App\Models\Address::create([
+            'service_provider_id' => '2',
+            'province' => 'Gandaki',
+            'district' => 'Kaski',
+            'city' => 'Pokhara',
+        ]);
+
+        \App\Models\Address::create([
+            'service_provider_id' => '2',
+            'province' => 'Bagmati',
+            'district' => 'Kathmandu',
+            'city' => 'Kathmandu',
+        ]);
+
+        \App\Models\Address::create([
+            'service_provider_id' => '2',
+            'province' => 'Gandaki',
+            'district' => 'Lamjung',
+            'city' => 'Beshisahar',
+        ]);
     }
 }

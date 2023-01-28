@@ -13,73 +13,97 @@ use Carbon\Carbon;
 
 class AuthController extends BaseController
 {
-
-
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'phone_number' => 'required|numeric|unique:users',
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'name' => 'required|string',
+            'phone_number' => 'required|min:8|max:13|unique:users',
             'email' => 'required|email| unique:users',
-            'password' => 'required',
-            'type' => 'required',
-
+            'password' => 'required'
         ]);
         if ($validator->fails()) {
-            return $this->sendError('Error Validation', $validator->errors(), 400);
+            $response['message'] = $validator->messages()->first();
+            $response['status'] = false;
+            return $response;
+        } else {
+            $user = new User([
+                'name' => $request->name,
+                'phone_number' => $request->phone_number,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+                'email_verified_at' => Carbon::now(),
+                'is_admin' => "2"
+            ]);
+            $user->save();
+
+            $tokenResult = $user->createToken('Personal Access Token');
+            $token = $tokenResult->token;
+            $token->expires_at = Carbon::now()->addMonths(3);
+            $token->save();
+
+            $customer = $user->only(
+                ['id',
+                    'name',
+                    'email',
+                    'phone_number',
+                ]
+            );
+            $token = [
+                'access_token' => $tokenResult->accessToken,
+                'token_type' => 'Bearer',
+                'expires_at' => Carbon::parse(
+                    $tokenResult->token->expires_at
+                )->toDateTimeString()];
+
+            return response()->json(['status' => true,
+            'message' => 'User Registered SUccessfully.',
+                'data' => ['customer' => $customer, 'token' => $token,]
+            ]);
         }
-
-        $name = $request->input('name');
-        $phone_number = $request->input('phone_number');
-        $email = $request->input('email');
-        $password = $request->input('password');
-        $type = $request->input('type');
-        $password = Hash::make($password);
-        $ldate = date('Y-m-d H:i:s');
-
-        $user = new User;
-        $user->name = $name;
-        $user->phone_number = $phone_number;
-        $user->email = $email;
-        $user->password = $password;
-        $user->email_verified_at = $ldate;
-        $user->type = $type;
-
-        $user->save();
-        $success['token'] = $user->createToken('MyAuthApp')->plainTextToken;
-
-        $success['data'] = $user;
-
-        return $this->sendResponse($success, 'User created successfully.');
 
     }
 
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-        if ($validator->fails()) {
-            return $this->sendError('Error Validation', $validator->errors(), 400);
+        try {
+            $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+                'email' => 'nullable',
+                'password' => 'required|string',
+                'remember_me' => 'boolean',
+            ]);
+            if ($validator->fails()) {
+                $response['message'] = $validator->messages()->first();
+                $response['status'] = false;
+                return $response;
+            } else {
+                $credentials = request(['email', 'password']);
+                $credentials = ['email' => $request->get('email'), 'password' => $request->get('password')];
+
+                if (!Auth::guard()->attempt($credentials))
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'The email or password is incorrect.'
+                    ]);
+                $user = $request->user();
+
+                $tokenResult = $user->createToken('Personal Access Token');
+                $token = $tokenResult->token;
+                if ($request->remember_me)
+                    $token->expires_at = \Illuminate\Support\Carbon::now()->addMonths(3);
+                $token->save();
+                $token = [
+                    'access_token' => $tokenResult->accessToken,
+                    'token_type' => 'Bearer',
+                    'expires_at' => Carbon::parse(
+                        $tokenResult->token->expires_at
+                    )->toDateTimeString()];
+
+                return response()->json(['status' => true,
+                    'data' => ['user' => $user, 'token' => $token]
+                ]);
+            }
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
         }
-        // $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = Auth::user();
-            DB::table('personal_access_tokens')->where('tokenable_id', $user->id)->delete();
-
-
-
-            $success['token'] =  $user->createToken('classecom')->plainTextToken;
-            $success['data'] =  $user;
-
-
-            return $this->sendResponse($success, 'User Login successfully.');
-
-
-        } else {
-            return $this->sendError('Unauthorised.', ['error' => 'Credettials doesnot match']);
         }
-    }
 }

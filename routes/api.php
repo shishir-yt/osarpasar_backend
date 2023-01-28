@@ -17,12 +17,17 @@ use App\Http\Controllers\Api\AuthController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-// Route::get('/protected', function () {
-//     return (auth("api")->user());
-// });
 
-// Route::group(['prefix' => 'user', 'middleware' => 'auth:api'], function () {
-//     Route::get('/protected', function () {
-//         return (auth("api")->user());
-//     });
-// });
+Route::group(['prefix' => '', 'middleware' => 'auth:api'], function () {
+    // Route::get('/service-providers', [App\Http\Controllers\Api\ServiceProviderApiController::class, "getServiceProviders"]);
+//     Route::get('/items', [App\Http\Controllers\Api\ItemApiController::class, "getItems"]);
+// Route::get('/categories', [App\Http\Controllers\Api\ItemApiController::class, "getCategories"]);
+Route::post('/other-items/store', [App\Http\Controllers\Api\ItemApiController::class, "addOtherItems"]);
+Route::post('/orders/store', [App\Http\Controllers\Api\ItemApiController::class, "storeOrder"]);
+// Route::get('address', [App\Http\Controllers\Api\AddressApiController::class, "getAddress"]);
+});
+Route::get('/service-providers', [App\Http\Controllers\Api\ServiceProviderApiController::class, "getServiceProviders"]);
+Route::get('/items', [App\Http\Controllers\Api\ItemApiController::class, "getItems"]);
+Route::get('/categories', [App\Http\Controllers\Api\ItemApiController::class, "getCategories"]);
+Route::get('address', [App\Http\Controllers\Api\AddressApiController::class, "getAddress"]);
+Route::post('order-address', [App\Http\Controllers\Api\AddressApiController::class, "storeOrderAddress"]);
