@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Controllers\BaseController;
 use Yajra\DataTables\DataTables;
-
+use Illuminate\Support\Facades\Crypt;
 class ServiceProviderController extends BaseController
 {
     public function __construct()
@@ -49,6 +49,7 @@ class ServiceProviderController extends BaseController
     public function create()
     {
         $info = $this->crudInfo();
+        $info['routeType'] = "Create";
 
         return view($this->createResource(), $info);
     }
@@ -61,7 +62,19 @@ class ServiceProviderController extends BaseController
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8'
+        ]);
 
+        $data = $request->all();
+        $data['is_admin'] = "0";
+        $data['password'] = Crypt::encryptString($data['password']);
+        $serviceProvider = new User($data);
+        $serviceProvider->save();
+
+        return redirect()->route($this->indexroute())->with('success', 'Service Provider added successfully.');
     }
 
     /**
@@ -86,7 +99,11 @@ class ServiceProviderController extends BaseController
      */
     public function edit($id)
     {
-        //
+        $info = $this->crudInfo();
+        $info['item'] = User::findOrFail($id);
+        $info['routeType'] = "Edit";
+
+        return view($this->editResource(), $info);
     }
 
     /**
@@ -98,7 +115,17 @@ class ServiceProviderController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+        ]);
+
+        $serviceProvider = User::findOrFail($id);
+        $data = $request->all();
+        $data['password'] = $data['password'] ? Crypt::encryptString($data['password']) : $serviceProvider->password;
+        $serviceProvider->update($data);
+
+        return redirect()->route($this->indexroute())->with('success', 'Service Provider updated successfully.');
     }
 
     /**
@@ -112,6 +139,6 @@ class ServiceProviderController extends BaseController
         $serviceProvider = User::findOrFail($id);
         $serviceProvider->delete();
 
-        return redirect()->route($this->indexRoute())->with('success', 'Service Provider Deleted Successfully.');
+        return redirect()->route($this->indexRoute())->with('delete', 'Service Provider Deleted Successfully.');
     }
 }
