@@ -28,8 +28,8 @@ Route::post('/orders/store', [App\Http\Controllers\Api\ItemApiController::class,
 // Route::get('address', [App\Http\Controllers\Api\AddressApiController::class, "getAddress"]);
 });
 Route::get('/service-providers', [App\Http\Controllers\Api\ServiceProviderApiController::class, "getServiceProviders"]);
-Route::get('/items', [App\Http\Controllers\Api\ItemApiController::class, "getItems"]);
-Route::get('/categories', [App\Http\Controllers\Api\ItemApiController::class, "getCategories"]);
+Route::get('/items/{id}', [App\Http\Controllers\Api\ItemApiController::class, "getItems"]);
+Route::get('/categories/{id}', [App\Http\Controllers\Api\ItemApiController::class, "getCategories"]);
 Route::get('address', [App\Http\Controllers\Api\AddressApiController::class, "getAddress"]);
 Route::get('provinces-address', [App\Http\Controllers\ProvinceController::class, "index"]);
 Route::post('order-address', [App\Http\Controllers\Api\AddressApiController::class, "storeOrderAddress"]);

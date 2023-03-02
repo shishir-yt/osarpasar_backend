@@ -15,21 +15,11 @@ class ItemApiController extends BaseController
     public function getCategories(Request $request)
     {
         try {
-            $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-                'service_provider_id' => 'required|exists:users,id',
-            ]);
-            if ($validator->fails()) {
-                $response['message'] = $validator->messages()->first();
-                $response['status'] = false;
-                return $response;
-            } else {
-
-            $categories = Category::where('service_provider_id', $request->service_provider_id)->with('items')->get();
+            $categories = Category::where('service_provider_id', $request->id)->with('items')->get();
             return response()->json([
                 'status' => true,
                 'data' => ['categories' => $categories]
             ], 201);
-        }
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
         }
@@ -79,21 +69,11 @@ class ItemApiController extends BaseController
     public function getItems(Request $request)
     {
         try {
-            $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-                'service_provider_id' => 'required|exists:users,id',
-            ]);
-            if ($validator->fails()) {
-                $response['message'] = $validator->messages()->first();
-                $response['status'] = false;
-                return $response;
-            } else {
-
-            $items = Item::where('service_provider_id', $request->service_provider_id)->with('category')->get();
+            $items = Item::where('service_provider_id', $request->id)->with('category')->get();
             return response()->json([
                 'status' => true,
                 'data' => ['items' => $items]
             ], 201);
-        }
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
         }
