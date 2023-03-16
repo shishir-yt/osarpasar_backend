@@ -43,6 +43,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('home', [App\Http\Controllers\ServiceProvider\DashboardController::class, 'home'])->name('serviceProvider.home');
         Route::resource('categories', App\Http\Controllers\ServiceProvider\CategoryController::class);
         Route::resource('items', App\Http\Controllers\ServiceProvider\ItemController::class);
+        Route::resource('notifications', \App\Http\Controllers\ServiceProvider\NotificationController::class)->only(['index', 'show']);
     });
 
     Route::resource('uploader', App\Http\Controllers\UploadController::class);

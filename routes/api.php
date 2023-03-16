@@ -32,6 +32,7 @@ Route::get('/items/{id}', [App\Http\Controllers\Api\ItemApiController::class, "g
 Route::get('/categories/{id}', [App\Http\Controllers\Api\ItemApiController::class, "getCategories"]);
 Route::get('address', [App\Http\Controllers\Api\AddressApiController::class, "getAddress"]);
 Route::get('provinces-address', [App\Http\Controllers\ProvinceController::class, "index"]);
+Route::get('request-order', [App\Http\Controllers\Api\NotificationApiController::class, "requestOrder"]);
 Route::post('order-address', [App\Http\Controllers\Api\AddressApiController::class, "storeOrderAddress"]);
 
 
