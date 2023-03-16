@@ -67,7 +67,7 @@ class AuthController extends BaseController
     {
         try {
             $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-                'email' => 'required',
+                'email' => 'nullable',
                 'password' => 'required|string',
                 'remember_me' => 'boolean',
             ]);
