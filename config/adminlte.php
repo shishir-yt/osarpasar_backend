@@ -356,6 +356,24 @@ return [
             'is_admin' => "0"
         ],
 
+        [
+            'type'         => 'navbar-notification',
+            'id'           => 'my-notification',
+            'icon'         => 'fas fa-bell',
+            'icon_color'   => 'gray',
+            'label'        => 0,
+            'label_color'  => 'danger',
+            'url'          => false,
+            'is_admin' => "0",
+            'topnav_right' => true,
+            'dropdown_mode'   => true,
+            'dropdown_flabel' => false,
+            'update_cfg'   => [
+                'url' => 'service-provider/notifications',
+                'period' => 30,
+            ],
+        ],
+
     ],
 
     /*

@@ -33,6 +33,7 @@ Route::get('/categories/{id}', [App\Http\Controllers\Api\ItemApiController::clas
 Route::get('address', [App\Http\Controllers\Api\AddressApiController::class, "getAddress"]);
 Route::get('provinces-address', [App\Http\Controllers\ProvinceController::class, "index"]);
 Route::post('order-address', [App\Http\Controllers\Api\AddressApiController::class, "storeOrderAddress"]);
+Route::get('order-request', [App\Http\Controllers\Api\NotificationController::class, "orderRequest"]);
 
 
 Route::get("test",function(){
