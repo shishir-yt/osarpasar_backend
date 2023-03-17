@@ -18,7 +18,7 @@ class ServiceProviderApiController extends BaseController
                 'data' => ['serviceProviders' => $serviceProviders]
             ], 201);
         } catch (\Exception $e) {
-            return $this->sendError($e->getMessage("hello"));
+            return $this->sendError($e->getMessage());
         }
     }
 }
