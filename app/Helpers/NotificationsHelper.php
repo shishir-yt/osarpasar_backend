@@ -16,9 +16,9 @@ class NotificationsHelper
         switch ($notification->type) {
             case "App\Notifications\user\OrderRequestNotification";
                 $data['title'] = $notification->data['title'];
-                $data['link'] = route('items.index');
+                $data['link'] = route('order.details', $notification->data['order_id']);
                 $data['notification'] = $notification;
-                break;
+                break;  
             // case "App\Notifications\AdminNewBlogNotification";
             //     $data['title'] = $notification->data['title'];
             //     $data['link'] = route('front.blog-details', $notification->data['id']);

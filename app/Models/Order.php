@@ -21,9 +21,9 @@ class Order extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function item()
+    public function quantity()
     {
-        return $this->belongsTo(Item::class, 'item_id');
+        return $this->belongsTo(Quantity::class);
     }
 
     public function otherItem()
@@ -34,5 +34,10 @@ class Order extends Model
     public function orderAddress()
     {
         return $this->belongsTo(OrderAddress::class, 'order_address_id');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 }

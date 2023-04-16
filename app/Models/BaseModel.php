@@ -10,72 +10,57 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class BaseModel extends Model
-// implements HasMedia
+class BaseModel extends Model implements HasMedia
 {
-    use HasFactory;
-    // , InteractsWithMedia;
+    use HasFactory, InteractsWithMedia;
 
-//     public function registerMediaConversions(Media $media = null): void
-//     {
-//         try {
-//             $this->addMediaConversion('thumb')
-//                 ->width(160)
-//                 ->height(300);
+    public function registerMediaConversions(Media $media = null): void
+    {
+        try {
+            $this->addMediaConversion('thumb')
+                ->width(160)
+                ->height(300);
 
-//             $this->addMediaConversion('medium')
-//                 ->width(320)
-//                 ->height(320);
+            $this->addMediaConversion('medium')
+                ->width(320)
+                ->height(320);
 
-//         } catch (InvalidManipulation $e) {
+        } catch (InvalidManipulation $e) {
 
-//         }
-//     }
+        }
+    }
 
-//     function getImage($collectionName = null)
-//     {
-//         if ($collectionName) {
-//             if (count($this->getMedia($collectionName)) == 0) return null;
-//             return $this->getFirstMediaUrl($collectionName ?? null);
-//         } else {
-//             if (count($this->getMedia()) == 0) return null;
-//             return $this->getFirstMediaUrl() ?? null;
-//         }
-//     }
+    function getImage($collectionName = null)
+    {
+        if ($collectionName) {
+            if (count($this->getMedia($collectionName)) == 0) return null;
+            return $this->getFirstMediaUrl($collectionName ?? null);
+        } else {
+            if (count($this->getMedia()) == 0) return null;
+            return $this->getFirstMediaUrl() ?? null;
+        }
+    }
 
-//     function getImageByIndex($index = 0)
-//     {
-//         if (count($this->getMedia()) == 0) return null;
-// //        if ($this->getMedia()->first()->getUrl('large') != null)
-//         try {
-//             return $this->getMedia()[$index]->getUrl() ?? null;
-//         } catch (\Exception $e) {
-//             return null;
-//         }
-//         return $this->getFirstMediaUrl() ?? null;
-//     }
+    function getImageByIndex($index = 0)
+    {
+        if (count($this->getMedia()) == 0) return null;
+//        if ($this->getMedia()->first()->getUrl('large') != null)
+        try {
+            return $this->getMedia()[$index]->getUrl() ?? null;
+        } catch (\Exception $e) {
+            return null;
+        }
+        return $this->getFirstMediaUrl() ?? null;
+    }
 
-//     function getThumbnail($collectionName = null)
-//     {
-//         if ($collectionName) {
-//             if (count($this->getMedia($collectionName)) == 0) return null;
-//             return $this->getMedia($collectionName)->first()->getUrl('medium') ?? null;
-//         } else {
-//             if (count($this->getMedia()) == 0) return null;
-//             return $this->getMedia()->first()->getUrl('medium') ?? null;
-//         }
-//     }
-
-//     public function addHashedMedia($file)
-//     {
-//         $name = md5(Str::uuid());
-//         $ext  = pathinfo($file, PATHINFO_EXTENSION);
-//         return $this->addMedia($file)
-//             ->usingName($name)
-//             ->usingFileName("$name.$ext");
-//     }
-
-//     static public function getMediaFileName($file)
-//     {
-//     }
+    function getThumbnail($collectionName = null)
+    {
+        if ($collectionName) {
+            if (count($this->getMedia($collectionName)) == 0) return null;
+            return $this->getMedia($collectionName)->first()->getUrl('medium') ?? null;
+        } else {
+            if (count($this->getMedia()) == 0) return null;
+            return $this->getMedia()->first()->getUrl('medium') ?? null;
+        }
+    }
 }

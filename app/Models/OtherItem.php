@@ -25,4 +25,6 @@ class OtherItem extends Model
     {
         return $this->hasMany(Order::class, 'other_item_id');
     }
+
+
 }

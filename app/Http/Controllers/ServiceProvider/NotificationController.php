@@ -125,4 +125,10 @@ class NotificationController extends Controller
     {
         //
     }
+
+    public function allNotifications()
+    {
+        $info['notifications'] = Auth::user()->notifications->all();
+        return view('service_providers.notifications', $info);
+    }
 }

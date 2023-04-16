@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Models\District;
+use App\Models\Province;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,9 +24,22 @@ Route::group(['middleware' => 'auth:api'], function () {
     // Route::get('/service-providers', [App\Http\Controllers\Api\ServiceProviderApiController::class, "getServiceProviders"]);
 //     Route::get('/items', [App\Http\Controllers\Api\ItemApiController::class, "getItems"]);
 // Route::get('/categories', [App\Http\Controllers\Api\ItemApiController::class, "getCategories"]);
+Route::post('/update-profile', [AuthController::class, 'updateProfile']);
 Route::post('/other-items/store', [App\Http\Controllers\Api\ItemApiController::class, "addOtherItems"]);
 Route::post('/orders/store', [App\Http\Controllers\Api\ItemApiController::class, "storeOrder"]);
+Route::get('/order-details/{id}', [App\Http\Controllers\Api\ItemApiController::class, "orderDetails"]);
+Route::get('/order-status', [App\Http\Controllers\Api\ItemApiController::class, "getOrderStatus"]);
+Route::get('/active-requests', [App\Http\Controllers\Api\ItemApiController::class, "activeRequests"]);
+Route::get('/active-bookings', [App\Http\Controllers\Api\ItemApiController::class, "activeBookings"]);
 // Route::get('address', [App\Http\Controllers\Api\AddressApiController::class, "getAddress"]);
+
+Route::group(['prefix' => 'notifications'], function () {
+    Route::get('list', [\App\Http\Controllers\Api\NotificationController::class, 'notifications']);
+    Route::get('mark-all-read', [\App\Http\Controllers\Api\NotificationController::class,'markAllRead']);
+    Route::get('mark-read/{id}', [\App\Http\Controllers\Api\NotificationController::class,'markRead']);
+    Route::get('unread-notifications', [\App\Http\Controllers\Api\NotificationController::class,'unreadNotificationsCount']);
+});
+
 });
 Route::get('/service-providers', [App\Http\Controllers\Api\ServiceProviderApiController::class, "getServiceProviders"]);
 Route::get('/items/{id}', [App\Http\Controllers\Api\ItemApiController::class, "getItems"]);
@@ -33,10 +47,53 @@ Route::get('/categories/{id}', [App\Http\Controllers\Api\ItemApiController::clas
 Route::get('address', [App\Http\Controllers\Api\AddressApiController::class, "getAddress"]);
 Route::get('provinces-address', [App\Http\Controllers\ProvinceController::class, "index"]);
 Route::post('order-address', [App\Http\Controllers\Api\AddressApiController::class, "storeOrderAddress"]);
-Route::get('order-request', [App\Http\Controllers\Api\NotificationController::class, "orderRequest"]);
+Route::get('/order-request', [App\Http\Controllers\Api\NotificationController::class, "orderRequest"]);
+Route::post('/complete-request', [App\Http\Controllers\Api\PaymentController::class, "verifyPayment"]);
 
+Route::get("provinces",function(){
+    $provinceParsedArray = [
+        [
+            "id" => 1,
+            "name" => "Province No 1",
+         ],
+         [
+            "id" => 2,
+            "name" => "Madhesh",
+         ],
+         [
+            "id" => 3,
+            "name" => "Bagmati",
+         ],
+         [
+            "id" => 4,
+            "name" => "Gandaki",
+         ],
+         [
+            "id" => 5,
+            "name" => "Lumbini",
+         ],
+         [
+            "id" => 6,
+            "name" => "Karnali",
+         ],
+         [
+            "id" => 7,
+            "name" => "Sudur Pashchim"
+         ],
+        ];
 
-Route::get("test",function(){
+        foreach($provinceParsedArray as $province){
+
+            $pr = new Province();
+
+            $pr->id = $province["id"];
+            $pr->name = $province["name"];
+            $pr->save();
+           }
+           return "ok";
+});
+
+Route::get("districts",function(){
 
 
 

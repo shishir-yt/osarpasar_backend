@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ServiceProvider;
 use App\Http\Controllers\BaseController;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\Item;
 use Yajra\DataTables\DataTables;
 
 class CategoryController extends BaseController
@@ -29,7 +30,7 @@ class CategoryController extends BaseController
                 ->addIndexColumn()
                 ->addColumn('action', function ($data) {
                     return view('admin.templates.index_action2', [
-                        'id' => $data->id, 'route' => $this->route
+                        'id' => $data->id, 'route' => $this->route, 'isCategory' => true
                     ])->render();
                 })
                 ->rawColumns(['action'])
@@ -132,6 +133,7 @@ class CategoryController extends BaseController
     public function destroy($id)
     {
         $category = Category::findOrFail($id);
+        Item::where('category_id', $category->id)->delete();
         $category->delete();
 
         return redirect()->route($this->indexRoute())->with('delete', 'Category Deleted Successfully.');

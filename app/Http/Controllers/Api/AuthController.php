@@ -106,4 +106,49 @@ class AuthController extends BaseController
             return $this->sendError($e->getMessage());
         }
         }
+
+        public function updateProfile(Request $request)
+    {
+        $customer = auth()->user();
+
+        //validation
+        $validator = Validator::make($request->all(), [
+            'phone' => 'nullable|min:8|max:11'
+        ]);
+
+        if ($validator->fails()) {
+            $response['message'] = $validator->messages()->first();
+            $response['success'] = false;
+            return response()->json($response);
+        }
+        try {
+            $customer->Update($request->only('name', 'email', 'phone'));
+
+            if ($request->profile_image) {
+                try {
+                    $customer->clearMediaCollection();
+                    $customer->addMediaFromBase64($request->profile_image)
+                        ->toMediaCollection();
+                    $customer->save();
+                } catch (FileDoesNotExist $e) {
+                } catch (\Exception $e) {
+                    error_log($e);
+                }
+            }
+
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    $e,
+                    'success' => false,
+                    'message' => 'Could\'t update the profile'
+                ]
+            );
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile updated successfully',
+            'data' => $customer
+        ]);
+    }
 }

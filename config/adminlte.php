@@ -132,7 +132,7 @@ return [
     'usermenu_enabled' => true,
     'usermenu_header' => false,
     'usermenu_header_class' => 'bg-primary',
-    'usermenu_image' => false,
+    'usermenu_image' => true,
     'usermenu_desc' => false,
     'usermenu_profile_url' => false,
 
@@ -302,13 +302,13 @@ return [
         ],
         [
             'text' => 'profile',
-            'url'  => 'admin/settings',
+            'route'  => 'serviceProvider.profile',
             'icon' => 'fas fa-fw fa-user',
             'topnav_user' => true,
         ],
         [
             'text' => 'change_password',
-            'url'  => 'admin/settings',
+            'route' => 'password.change',
             'icon' => 'fas fa-fw fa-lock',
             'topnav_user' => true,
         ],
@@ -353,6 +353,12 @@ return [
             'text'        => 'Item',
             'route'         => 'items.index',
             'icon'        => 'nav-icon fas fa-check',
+            'is_admin' => "0"
+        ],
+        [
+            'text'        => 'Payment',
+            'route'         => 'payments.index',
+            'icon'        => 'nav-icon fas fa-money-bill',
             'is_admin' => "0"
         ],
 

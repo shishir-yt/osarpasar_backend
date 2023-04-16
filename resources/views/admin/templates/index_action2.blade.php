@@ -9,14 +9,23 @@
             class="fa fa-pencil-alt" style="margin: 0 0.1rem!important;"></i></a>
 @endif
 
-
-<form class="d-inline" action="{{ route($route . 'destroy', $id ?? $item->id) }}" method="POST"
-    onclick="return confirm('Are you sure?')">
-    @csrf
-    @method('DELETE')
-    <button class="btn btn-sm btn-clean btn-icon btn-hover-danger"><i class="fa fa-trash"
-            style="margin: 0 0.1rem!important;"></i></button>
-</form>
+@if (!isset($isCategory))
+    <form class="d-inline" action="{{ route($route . 'destroy', $id ?? $item->id) }}" method="POST"
+        onclick="return confirm('Are you sure?')">
+        @csrf
+        @method('DELETE')
+        <button class="btn btn-sm btn-clean btn-icon btn-hover-danger"><i class="fa fa-trash"
+                style="margin: 0 0.1rem!important;"></i></button>
+    </form>
+@else
+    <form class="d-inline" action="{{ route($route . 'destroy', $id ?? $item->id) }}" method="POST"
+        onclick="return confirm('Are you sure you want to delete? Items in this category will also be affected.')">
+        @csrf
+        @method('DELETE')
+        <button class="btn btn-sm btn-clean btn-icon btn-hover-danger"><i class="fa fa-trash"
+                style="margin: 0 0.1rem!important;"></i></button>
+    </form>
+@endif
 
 @foreach ($actions ?? [] as $action)
     {!! $action !!}
