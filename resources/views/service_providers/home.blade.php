@@ -58,7 +58,7 @@
             <div class="small-box bg-gradient-info">
                 <div class="inner">
                     <h3>{{ $collections }}</h3>
-                    <p>Colletions</p>
+                    <p>Total Collection</p>
                 </div>
                 <div class="icon">
                     <i class="fas fa-money-bill"></i>
