@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\BaseController as BaseController;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OtpMail;
 
 class AuthController extends BaseController
 {
@@ -150,5 +152,132 @@ class AuthController extends BaseController
             'message' => 'Profile updated successfully',
             'data' => $customer
         ]);
+    }
+    public function changePassword(Request $request)
+    {
+        try {
+            $customer = auth('customer-api')->user();
+            //validation
+            $validator = Validator::make($request->all(), [
+                'old_password' => 'required|string|min:8',
+                'new_password' => 'required|string|min:8',
+            ]);
+
+            if ($validator->fails()) {
+                $response['data'] = $validator->messages();
+                $response['success'] = false;
+                return $response;
+            }
+
+            if (!(Hash::check($request->get('old_password'), $customer->getAuthPassword()))) {
+                // The passwords matches
+                return response()->json(['success' => false, 'message' => 'Your current password does not match with the password you provided. Please try again.']);
+            }
+
+            //update
+            if (strcmp($request->get('old_password'), $request->get('new_password')) == 0) {
+                //Current password and new password are same
+                return response()->json(['success' => false, 'message' => 'New Password cannot be same as your current password. Please choose a different password.']);
+            }
+
+            $customer->password = bcrypt($request->get('new_password'));
+            $customer->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password updated successfully',
+                'data' => $customer,
+            ]);
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    public function forgetPassword(Request $request)
+    {
+        try {
+            //validation
+            $validator = Validator::make($request->all(), [
+                'email' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                $response['data'] = $validator->messages();
+                $response['success'] = false;
+                return $response;
+            }
+
+            $user = User::where('email', $request->email)->first();
+
+            $otp = "12345";
+            $user->otp = $otp;
+            $user->update();
+
+            $mail_details = [
+                'subject' => 'OTP Verification',
+                'body' => $otp
+            ];
+
+            Mail::to($request->email)->send(new OtpMail($mail_details));
+
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid email. Please try again.'
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'user' => $user->id,
+                    'otp' => $otp
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    public function resetPassword(Request $request)
+    {
+        try {
+            //validation
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required',
+                'otp' => 'required',
+                'new_password' => 'required|string|min:8',
+            ]);
+
+            if ($validator->fails()) {
+                $response['data'] = $validator->messages();
+                $response['success'] = false;
+                return $response;
+            }
+
+            $user = User::where('id', $request->customer_id)->first();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid customer id. Please try again.'
+                ]);
+            }
+            if ($request->otp != $user->otp) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid otp.'
+                ]);
+            }
+
+            $user->password = bcrypt($request->new_password);
+            $user->update();
+            return response()->json([
+                'success' => true,
+                'message' => 'Password Reset Successfully.'
+            ]);
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
     }
 }
